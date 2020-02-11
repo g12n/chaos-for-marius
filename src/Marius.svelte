@@ -19,7 +19,7 @@
 	$: offset = size/12;
 
 	
-	$: name = `marius-${steps}_columns-angle_${Math.round(math.radToDeg(angle))}-spread_${Math.round(spread*100)}-${size}x${size}`
+	$: name = `chaos4marius-${steps}_columns-angle_${Math.round(math.radToDeg(angle))}-spread_${Math.round(spread*100)}-${size}x${size}`
 	
 	let square = (cx=100 , cy=10, size=100, rot=0) => {
 		let sides = 4;

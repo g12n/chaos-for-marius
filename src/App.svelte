@@ -13,7 +13,7 @@
 	
 	let save = () =>{
 		let now = new Date();
-		let fileName = `${artworks[art].fileName}-${name}.png`
+		let fileName = `${name}.png`
 		canvas.toBlob(function(blob) {
   	  		saveAs(blob, fileName);
 		});
