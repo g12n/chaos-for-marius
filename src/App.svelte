@@ -1,8 +1,7 @@
 <script>
 	import Marius from './Marius.svelte'
-	 import 'file-saver';
-	 	import math from 'canvas-sketch-util/math';
-
+	import 'file-saver';
+	import {radToDeg,degToRad} from 'canvas-sketch-util/math';
 	let name;
 	let size = 1024;
 	let steps=16;
@@ -10,7 +9,6 @@
 	let hue=100;
 	let spread = 0.15;
 	let angle = 0.25 * Math.PI;
-	
 	let save = () =>{
 		let now = new Date();
 		let fileName = `${name}.png`
@@ -18,7 +16,6 @@
   	  		saveAs(blob, fileName);
 		});
 	}
-
 </script>
 
 <style>
@@ -49,20 +46,20 @@
 <p>{name}</p>
 <div class="ui">
 <label>
-<input	type="range" bind:value={size} min={400} max={3000} />
+	<input	type="range" bind:value={size} min={400} max={3000} />
 	{size}&times;{size}px
 </label>
 <label>
-<input	type="range" bind:value={steps} min={3} max={24} />
-		{steps} Columns
+	<input	type="range" bind:value={steps} min={3} max={24} />
+	{steps} Columns
 </label>
 <label>
 <input	type="range" bind:value={spread} min={0.1} max={1} step="0.01" />
-		{Math.round(spread*100)}%
+{Math.round(spread*100)}%
 </label>
 <label>
-<input	type="range" bind:value={angle} min={0} max={2*Math.PI} step={math.degToRad(1)} />
-		{Math.round(math.radToDeg(angle))}°
+	<input	type="range" bind:value={angle} min={0} max={2*Math.PI} step={degToRad(1)} />
+	{Math.round(radToDeg(angle))}°
 </label>
 <button on:click={save}>Download Image</button>
 </div>
