@@ -19,12 +19,6 @@
 </script>
 
 <style>
-	:global(body){
-		padding: 0; 
-		margin: 0;
-		background: #456;
-		color: #fff;
-	}
 	:global(canvas){
 		display:block;
 		width:70vmin;
