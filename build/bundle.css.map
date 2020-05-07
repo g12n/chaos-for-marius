@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "file": "bundle.css",
+  "sources": [
+    "../../App.svelte"
+  ],
+  "sourcesContent": [
+    "<script>\n\timport Marius from './Marius.svelte'\n\timport 'file-saver';\n\timport {radToDeg,degToRad} from 'canvas-sketch-util/math';\n\tlet name;\n\tlet size = 1024;\n\tlet steps=16;\n\tlet canvas;\n\tlet hue=100;\n\tlet spread = 0.15;\n\tlet angle = 0.25 * Math.PI;\n\tlet save = () =>{\n\t\tlet now = new Date();\n\t\tlet fileName = `${name}.png`\n\t\tcanvas.toBlob(function(blob) {\n  \t  \t\tsaveAs(blob, fileName);\n\t\t});\n\t}\n</script>\n\n<style>\n\t:global(canvas){\n\t\tdisplay:block;\n\t\twidth:70vmin;\n\t\theight: 70vmin;\n\t\tmargin: 5vmin  auto;\n\t\tborder: 1vmin solid #fff;\n\t\tbox-shadow: 1vmin 2vmin 30px rgba(0,0,0,0.4)\n\t}\n\t.ui{\n\t\tdisplay: flex; \n\t\tflex-direction: column;\n\t\tpadding: 2rem;\n\t}\n\tp{font-size: 1.2rem; text-align: center;}\n</style>\n\n<Marius size={size} angle={angle} spread={spread} bind:canvas={canvas} bind:name={name} steps={steps}/>\n\n<p>{name}</p>\n<div class=\"ui\">\n<label>\n\t<input\ttype=\"range\" bind:value={size} min={400} max={3000} />\n\t{size}&times;{size}px\n</label>\n<label>\n\t<input\ttype=\"range\" bind:value={steps} min={3} max={24} />\n\t{steps} Columns\n</label>\n<label>\n<input\ttype=\"range\" bind:value={spread} min={0.1} max={1} step=\"0.01\" />\n{Math.round(spread*100)}%\n</label>\n<label>\n\t<input\ttype=\"range\" bind:value={angle} min={0} max={2*Math.PI} step={degToRad(1)} />\n\t{Math.round(radToDeg(angle))}°\n</label>\n<button on:click={save}>Download Image</button>\n</div>\n\n"
+  ],
+  "names": [],
+  "mappings": "AAqBS,MAAM,AAAC,CAAC,AACf,QAAQ,KAAK,CACb,MAAM,MAAM,CACZ,MAAM,CAAE,MAAM,CACd,MAAM,CAAE,KAAK,EAAE,IAAI,CACnB,MAAM,CAAE,KAAK,CAAC,KAAK,CAAC,IAAI,CACxB,UAAU,CAAE,KAAK,CAAC,KAAK,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC;CAC7C,CAAC,AACD,kBAAG,CAAC,AACH,OAAO,CAAE,IAAI,CACb,cAAc,CAAE,MAAM,CACtB,OAAO,CAAE,IAAI,AACd,CAAC,AACD,gBAAC,CAAC,SAAS,CAAE,MAAM,CAAE,UAAU,CAAE,MAAM,AAAC,CAAC"
+}
