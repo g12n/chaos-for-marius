@@ -21,6 +21,6 @@
     "gl-vec2": "^1.3.0",
     "gl-vec3": "^1.1.3",
     "point-line-distance": "^1.0.0",
-    "sirv-cli": "^1.0.3"
+    "sirv-cli": "^1.0.4"
   }
 }
