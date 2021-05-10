@@ -1,10 +1,11 @@
 <script>
 	import Marius from './Marius.svelte'
+	import Input from './Input.svelte'
 	import 'file-saver';
 	import {radToDeg,degToRad} from 'canvas-sketch-util/math';
 	let name;
 	let size = 1024;
-	let steps=16;
+	let steps=12;
 	let canvas;
 	let hue=100;
 	let spread = 0.15;
@@ -19,42 +20,54 @@
 </script>
 
 <style>
+	:global(*){
+		box-sizing: border-box;
+	}
 	:global(canvas){
 		display:block;
-		width:70vmin;
-		height: 70vmin;
+		width:80%;
+		max-width: 80vmin;
 		margin: 5vmin  auto;
 		border: 1vmin solid #fff;
-		box-shadow: 1vmin 2vmin 30px rgba(0,0,0,0.4)
+		box-shadow: 1vmin 2vmin 30px rgba(0,0,0,0.4);
+		touch-action: none;
 	}
+	:global(body){
+		display: grid;
+		grid-template-columns: 1fr;
+
+		grid-template-rows: auto 1fr;
+		align-items: start;
+	}
+
+	@media (min-width:400px) {
+		:global(body){
+			grid-template-columns: 3fr 1fr;
+			align-items: center;
+		}
+	}
+
 	.ui{
-		display: flex; 
-		flex-direction: column;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		align-items: start;
+		justify-content: start;
+		grid-gap: 1rem;
 		padding: 2rem;
 	}
-	p{font-size: 1.2rem; text-align: center;}
+	button{
+		grid-column: span 2;
+	}
+	p{font-size: 0.8rem; text-align: center;
+		grid-column: span 2;}
 </style>
+<div>
+<Marius size={size} bind:angle={angle} bind:spread={spread} bind:canvas={canvas} bind:name={name} steps={steps}/>
 
-<Marius size={size} angle={angle} spread={spread} bind:canvas={canvas} bind:name={name} steps={steps}/>
-
-<p>{name}</p>
+</div>
 <div class="ui">
-<label>
-	<input	type="range" bind:value={size} min={400} max={3000} />
-	{size}&times;{size}px
-</label>
-<label>
-	<input	type="range" bind:value={steps} min={3} max={24} />
-	{steps} Columns
-</label>
-<label>
-<input	type="range" bind:value={spread} min={0.1} max={1} step="0.01" />
-{Math.round(spread*100)}%
-</label>
-<label>
-	<input	type="range" bind:value={angle} min={0} max={2*Math.PI} step={degToRad(1)} />
-	{Math.round(radToDeg(angle))}°
-</label>
-<button on:click={save}>Download Image</button>
+	<Input label="w" bind:value={size} min={400} max={3000} step={8}/>
+	<Input label="c" bind:value={steps} min={3} max={24}/>
+	<button on:click={save}>Download Image</button>
 </div>
 

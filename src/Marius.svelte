@@ -1,7 +1,7 @@
 <script>
 	import { onMount, afterUpdate } from 'svelte';
 	import {createGridPts} from "./lib.js";
-	import {mapRange,radToDeg} from 'canvas-sketch-util/math';
+	import math, {mapRange,radToDeg} from 'canvas-sketch-util/math';
 	import {dist,rotate,add} from 'gl-vec2';
 	import pld from 'point-line-distance';
 
@@ -14,6 +14,13 @@
 	export let name;
 	export let angle = 0.5 * 2 * Math.PI;
 	export let spread = 0.25;
+
+	let x = 0;
+	let y = 0;
+	let cx = 0; 
+	let cy = 0;
+	let cw = 0; 
+	let ch = 0;
 
 	$: offset = size/12;	
 	$: name = `chaos4marius-${steps}_columns-angle_${Math.round(radToDeg(angle))}-spread_${Math.round(spread*100)}-${size}x${size}`
@@ -43,6 +50,9 @@
 		let topLeft = [offset,offset]
 		let bottomRight = [size-offset, size-offset]
 		let center = [size/2, size/2];
+
+	
+
 		//let line = Line.fromAngle(center, angle, size);
 
 		let a = [-size,0,0];
@@ -78,5 +88,67 @@
 	
 	onMount(render)
 	afterUpdate(render)
+
+	
+	function updateAngle(x,y){
+
+		let {top, left, width, height} = canvas.getBoundingClientRect();
+		let cx = left+(width/2)
+		let cy = top+(height/2)
+
+		
+		let distance = dist([cx,cy],[x,y])
+		spread = (1 - (distance/ (width/2))).toFixed(2)
+		spread = Math.max(spread,0.05)
+
+		angle = Math.atan2(cy - y, cx - x)
+		angle = angle < 0 ? Math.PI + angle : angle
+		angle = angle.toFixed(2)
+	}
+	
+	function handleMousemove(event) {
+		updateAngle(event.clientX, event.clientY)
+	}
+
+	function handleMouseup(event) {
+		document.body.style.cursor='default'
+		window.removeEventListener('mousemove', handleMousemove);
+		window.removeEventListener('mouseup', handleMouseup);
+	}
+	
+	function handleMousedown(event){
+		document.body.style.cursor='ew-resize'
+		updateAngle(event.clientX, event.clientY)
+		window.addEventListener('mousemove', handleMousemove);
+		window.addEventListener('mouseup', handleMouseup);
+	}
+
+	function handleTouchMove(event) {
+		
+		let touchobj = event.changedTouches[0]; // erster Finger
+		console.log(touchobj.clientX,touchobj.clientY)
+		updateAngle(touchobj.clientX, touchobj.clientY)
+	}
+
+	function handleTouchUp(event) {
+		console.log("touchUp")
+		document.body.style.cursor='default'
+		window.removeEventListener('touchmove', handleTouchMove);
+		window.removeEventListener('touchend', handleTouchUp);
+	}
+
+	function handleTouchdown(event){
+		let touchobj = event.touches[0]; // erster Finger
+		console.log(touchobj.clientX,touchobj.clientY)
+		updateAngle(touchobj.clientX, touchobj.clientY)
+		console.log("touchdown")
+		window.addEventListener('touchmove', handleTouchMove);
+		window.addEventListener('touchend', handleTouchUp);
+	}
+
+	
+
+	
+
 </script>
-<canvas bind:this={canvas} width={size} height={size}  />
+<canvas on:mousedown={handleMousedown}  on:touchstart={handleTouchdown} bind:this={canvas} width={size} height={size}  />
