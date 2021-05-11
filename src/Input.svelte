@@ -11,45 +11,104 @@
 	$: input = value;
 	
 	let x = 0;
+    let y = 0;
 	let dx = 0;
 	let scrobbing = false;
 
+    let showTipp = false;
 	
-	function handleMousemove(event) {
-		dx =  event.clientX - x;
-		x = event.clientX;
-		let v = value + (dx * step);
+
+    function updateValue(newX){
+
+        let dx =  parseInt(newX - x);
+        x = newX;
+        let v = value + (dx * step);
 		value = Math.max(min,Math.min(max,v));
         input = value;
+    }
+
+
+	function handleMousemove(event) {
+        y = event.clientY;
+		updateValue(event.clientX)
 	}
 	
 	function handleMouseup(event) {
 		document.body.style.cursor='default'
 		window.removeEventListener('mousemove', handleMousemove);
 		window.removeEventListener('mouseup', handleMouseup);
+        showTipp = false;
 	}
-	
 	
 	function handleMousedown(event){
 		document.body.style.cursor='ew-resize'
-		x = event.clientX;
+        y = event.clientY;
+        updateValue(event.clientX)
+        showTipp = true;
 		window.addEventListener('mousemove', handleMousemove);
 		window.addEventListener('mouseup', handleMouseup);
 	}
 	
 	function handleChange (event) {
 		let v = mexp.eval(`${input}`);
-		value = 	value = Math.max(min,Math.min(max,v)); 
+		value = value = Math.max(min,Math.min(max,v)); 
 		input = value;
 	}
+
+
+    function handleTouchMove(event) {
+		let touchobj = event.changedTouches[0]; // erster Finger
+        y = touchobj.clientY;
+		updateValue(touchobj.clientX)
+	}
+
+	function handleTouchUp(event) {
+		document.body.style.cursor='default'
+        showTipp = false;
+		window.removeEventListener('touchmove', handleTouchMove);
+		window.removeEventListener('touchend', handleTouchUp);
+	}
+
+	function handleTouchdown(event){
+		let touchobj = event.touches[0]; // erster Finger
+        y = touchobj.clientY;
+        showTipp = true;
+		updateValue(touchobj.clientX)
+
+		window.addEventListener('touchmove', handleTouchMove);
+		window.addEventListener('touchend', handleTouchUp);
+	}
+
+
+
 </script>
 
-<label>
-	<span on:mousedown={handleMousedown}>{label}</span>
+<label on:touchstart={handleTouchdown}>
+	<span  on:mousedown={handleMousedown}>{label}</span>
 	<input on:change={handleChange} type="text" bind:value={input}/>
 </label>
-
+{#if showTipp}
+    <div class="tooltip" style="--x:{x}px;--y:{y}px"><span>{value}</span></div>
+{/if}
 <style>
+    .tooltip{
+        width: 80px;
+        height: 80px;
+        background-color: rgba(0,0,0,0.2);
+        position: fixed;
+        left: var(--x); 
+        top: var(--y); 
+        transform: translate(-50%,-50%);
+        border-radius: 50%;
+        touch-action: none;
+    }
+    .tooltip span{
+        position: absolute;
+        top:-2em;
+        left: 50%;
+        transform: translate(-50%,0);
+        touch-action: none;
+    }
 	label{
 		display: grid; 
 		grid-template-columns: 1.5em 1fr;
@@ -65,6 +124,7 @@
 	span { 
 		user-select: none;
 		cursor: ew-resize;
+        touch-action: none;
 	}
 	input, span{
 		font-size: 0.8rem;
