@@ -16,6 +16,7 @@
 	let scrobbing = false;
 
     let showTipp = false;
+    let scrubbing = false
 	
 
     function updateValue(newX){
@@ -38,13 +39,15 @@
 		window.removeEventListener('mousemove', handleMousemove);
 		window.removeEventListener('mouseup', handleMouseup);
         showTipp = false;
+        scrubbing = false;
 	}
 	
 	function handleMousedown(event){
+        scrubbing = true;
 		document.body.style.cursor='ew-resize'
         y = event.clientY;
+        x = event.clientX;
         updateValue(event.clientX)
-        showTipp = true;
 		window.addEventListener('mousemove', handleMousemove);
 		window.addEventListener('mouseup', handleMouseup);
 	}
@@ -83,7 +86,7 @@
 
 </script>
 
-<label on:touchstart={handleTouchdown}>
+<label class={scrubbing ? "scrubbing": "" } on:touchstart={handleTouchdown}>
 	<span  on:mousedown={handleMousedown}>{label}</span>
 	<input on:change={handleChange} type="text" bind:value={input}/>
 </label>
@@ -101,6 +104,7 @@
         transform: translate(-50%,-50%);
         border-radius: 50%;
         touch-action: none;
+        
     }
     .tooltip span{
         position: absolute;
@@ -108,23 +112,35 @@
         left: 50%;
         transform: translate(-50%,0);
         touch-action: none;
+       
     }
 	label{
 		display: grid; 
 		grid-template-columns: 1.5em 1fr;
 		align-items: center;
-		border-radius: 2px;
+		border-radius: 4px;
+        background: #fff;
+        color: #000
 	}	
 	
-	label:hover{outline: 1px solid #ddd}
+	label:hover{
+        box-shadow: 0 0 0 1px #0af;
+    }
 	
-	label:focus-within{
-	outline: 2px solid #00aaff
+	label:focus-within, 
+    label.scrubbing{
+        box-shadow: 0 0 0 3px #0af;
+        color: #0af
+    }
+    label.scrubbing input{
+        cursor: ew-resize;;
     }
 	span { 
 		user-select: none;
 		cursor: ew-resize;
         touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
 	}
 	input, span{
 		font-size: 0.8rem;
@@ -133,6 +149,7 @@
 		margin:0;
 		border:none;
 		outline: none;
+        border-radius: 4px;
 	}
 	input{
 		padding: 0.25rem 0.5rem;
